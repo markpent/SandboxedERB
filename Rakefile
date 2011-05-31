@@ -15,10 +15,10 @@ require 'jeweler'
 Jeweler::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
   gem.name = "sandboxed_erb"
-  gem.homepage = "http://github.com/markpent/sandboxed_erb"
+  gem.homepage = "http://github.com/markpent/SandboxedERB"
   gem.license = "MIT"
-  gem.summary = %Q{TODO: one-line summary of your gem}
-  gem.description = %Q{TODO: longer description of your gem}
+  gem.summary = %Q{Run an erb template in a sandbox.}
+  gem.description = %Q{All your customers to extend your web application by exposing erb templates that can be safely run on your server within a sandbox.}
   gem.email = "mark.pent@gmail.com"
   gem.authors = ["MarkPent"]
   # dependencies defined in Gemfile

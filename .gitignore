@@ -13,6 +13,7 @@ doc
 
 # jeweler generated
 pkg
+*.lock
 
 # Have editor/IDE/OS specific files you need to ignore? Consider using a global gitignore: 
 #
@@ -34,7 +35,7 @@ pkg
 #tmtags
 
 # For emacs:
-#*~
+*~
 #\#*
 #.\#*
 
@@ -46,3 +47,4 @@ pkg
 
 # For rubinius:
 #*.rbc
+
