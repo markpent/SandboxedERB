@@ -1,7 +1,5 @@
-module SandboxedErb
-  class Template
-    def compile
-      puts "Compile"
-    end
-  end
-end
+require "erb"
+require "partialruby"
+require "sandboxed_erb/template"
+require "sandboxed_erb/tree_processor"
+require "sandboxed_erb/system_mixins"
