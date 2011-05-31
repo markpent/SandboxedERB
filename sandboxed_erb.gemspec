@@ -24,10 +24,11 @@ Gem::Specification.new do |s|
     "Rakefile",
     "VERSION",
     "lib/sandboxed_erb.rb",
+    "sandboxed_erb.gemspec",
     "test/helper.rb",
     "test/test_sandboxed_erb.rb"
   ]
-  s.homepage = %q{http://github.com/markpent/sandboxed_erb}
+  s.homepage = %q{http://github.com/markpent/SandboxedERB}
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.7.2}
