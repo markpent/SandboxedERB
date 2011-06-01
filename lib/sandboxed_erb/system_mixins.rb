@@ -1,37 +1,37 @@
 #add sandboxed method to basic inbuilt objects
 
 class String
-  def sandboxed
+  def to_sandboxed
     self
   end
 end
 
 class Fixnum
-  def sandboxed
+  def to_sandboxed
     self
   end
 end
 
 class Array
-  def sandboxed
+  def to_sandboxed
     self  
   end
 end
 
 class Hash
-  def sandboxed
+  def to_sandboxed
     self  
   end
 end
 
 class FalseClass
-  def sandboxed
+  def to_sandboxed
     self  
   end
 end
 
 class TrueClass
-  def sandboxed
+  def to_sandboxed
     self  
   end
 end
