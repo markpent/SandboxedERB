@@ -17,7 +17,7 @@ class Module
           begin
             @object.send(sym, *args)
           rescue Exception=>e
-            SandboxedErb::NotSandboxed.new("Error calling #{sym} on class #{@object.class.name}: #{e.message}")
+            raise SandboxedErb::RuntimeError, "Error calling #{sym} on class #{@object.class.name}: #{e.message}"
           end
         end
       end
@@ -33,7 +33,7 @@ class Object
       self.to_sandboxed
     rescue
       #must not support sandboxing....
-      SandboxedErb::NotSandboxed.new("#{self.class.name} is not accessable")
+      raise SandboxedErb::RuntimeSecurityError, "#{self.class.name} is not accessable"
     end
   end
 end
