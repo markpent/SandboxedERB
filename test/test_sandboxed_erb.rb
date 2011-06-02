@@ -20,7 +20,7 @@ class TestSandboxedErb < Test::Unit::TestCase
     template = SandboxedErb::Template.new
     template.compile("Hello World, 1 + 1 = <%= 1 + 1 %>.")
     
-    result = template.run({})
+    result = template.run(nil, {})
     
     assert_equal "Hello World, 1 + 1 = 2.", result
   end
@@ -30,7 +30,7 @@ class TestSandboxedErb < Test::Unit::TestCase
     str_template = "the value for key1 is <%=data[:key1] %> and key2 is <%=data[:key2] %>"
     template = SandboxedErb::Template.new
     template.compile(str_template)
-    result = template.run({:data=>data})
+    result = template.run(nil, {:data=>data})
     assert_equal "the value for key1 is A and key2 is B", result
   end
   
@@ -50,7 +50,11 @@ class TestSandboxedErb < Test::Unit::TestCase
     
     tc = TestClass.new._sbm
     assert_equal "A", tc.ok_to_call
-    assert_match /Unknown method not_ok_to_call on object/, tc.not_ok_to_call.to_s
+    
+    
+    assert_raise(SandboxedErb::MissingMethodError) {
+      tc.not_ok_to_call.to_s
+    } 
     
   end
   
@@ -72,44 +76,93 @@ class TestSandboxedErb < Test::Unit::TestCase
     str_template = "ok_to_call = <%=tc.ok_to_call %>"
     template = SandboxedErb::Template.new
     template.compile(str_template)
-    result = template.run({:tc=>TestClass.new})
+    result = template.run(nil, {:tc=>TestClass.new})
     
     assert_equal "ok_to_call = A", result
   end
   
-  should "handle missing function gracefully" do
+
+  should "report insecure call during run: method" do
+    str_template = "i shoudl not be
+    able to get
+    <%
+    eval('something')
+    %>
+    "
+    template = SandboxedErb::Template.new
+    assert_equal true, template.compile(str_template)
+    assert_equal nil, template.run(nil, {})
     
-    class TestClass
-      sandboxed_methods :ok_to_call
-      
-      def ok_to_call
-        "A"
-      end
-      
-      def not_ok_to_call
-        "B"
+    assert_equal "Error on line 4: Unknown method: eval", template.get_error
+  end
+  
+  
+  should "allow mixins" do
+    
+    module MixinTest
+      def test_mixin_method(val)
+        "TEST #{val}"  
       end
     end
     
-    str_template = "not_ok_to_call = <%=tc.not_ok_to_call.some_other_thingo.and_this %>"
-    template = SandboxedErb::Template.new
-    template.compile(str_template)
-    result = template.run({:tc=>TestClass.new})
+    str_template = "mixin = <%= test_mixin_method(1) %>"
+    template = SandboxedErb::Template.new([MixinTest])
+    assert_equal true, template.compile(str_template)
+    result = template.run(nil, {})
     
-    assert_match /not_ok_to_call = Unknown method not_ok_to_call on object/, result
+    assert_equal "mixin = TEST 1", result
 
   end
   
-  should "report insecure call during compile: global" do
-    str_template = "i shoudl not be
-    able to get
-    global: <%= $some_global_value %>
-    "
-    template = SandboxedErb::Template.new
-    assert_equal false, template.compile(str_template)
+  should "allow multiple mixins" do
     
-    assert_equal "Line 3: You cannot access global variables in a template", template.get_error
+    module MixinTest1
+      def test_mixin_method1(val)
+        "TEST #{val}"  
+      end
+    end
+    
+    module MixinTest2
+      def test_mixin_method2(val)
+        "TEST #{val}"  
+      end
+    end
+    
+    str_template = "mixin = <%= test_mixin_method1(test_mixin_method2('A')) %>"
+    template = SandboxedErb::Template.new([MixinTest1, MixinTest2])
+    assert_equal true, template.compile(str_template)
+    result = template.run(nil, {})
+    
+    assert_equal "mixin = TEST TEST A", result
+
   end
+  
+  should "access context objects from mixins" do
+    
+    module MixinTest
+      def test_mixin_method
+        "TEST #{@controller.some_value}"  
+      end
+    end
+    
+    class FauxController
+      def some_value
+        "ABC"  
+      end
+    end
+    
+    faux_controller = FauxController.new
+    
+    str_template = "mixin = <%= test_mixin_method %>"
+    template = SandboxedErb::Template.new([MixinTest])
+    assert_equal true, template.compile(str_template)
+    result = template.run({:controller=>faux_controller}, {})
+    
+    assert_equal "mixin = TEST ABC", result
+
+  end
+  
+  
   
   
 end
