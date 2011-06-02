@@ -18,40 +18,29 @@ module SandboxedErb
     def process_call(tree)
 
       puts tree.inspect if $DEBUG
-      if tree[2] == :_sbm
-        raise "Line #{tree.line}: _sbm is a reserved method"
-        add_line_number(tree, s(:call, nil, :raise, s(:arglist, s(:str,"_sbm is a reserved method"))))
+      if [:_sbm, :_get_local].include?(tree[2]) 
+        raise SandboxedErb::CompileSecurityError, "Line #{tree.line}: #{tree[2].to_s} is a reserved method"
       elsif tree[0] == :call && tree[1] && (tree[1][0] == :lvar || tree[1][0] == :lit)
         #this is a method call onto an object... just call sandboxed on the result to make sure we have the safe version
-        #puts "local call"
         res = s(:call, s(:call, s(:call, tree[1], :_sbm, s(:arglist)), tree[2], process(tree[3])), :_sbm, s(:arglist))
-        #puts res.inspect
         add_line_number(tree, res)
       elsif tree[0] == :call && tree[1] && (tree[1][0] == :call)
-        #puts "nested call"
+        #call a method on return value of another call
         res = s(:call, s(:call, process(tree[1]), tree[2], process(tree[3])), :_sbm, s(:arglist))
-        #puts res.inspect
         add_line_number(tree, res)
       elsif tree[0] == :call && tree[1].nil? 
-        if tree[2] == :_get_local #this is reserved!
-          raise "Line #{tree.line}: _get_local is a reserved method"
-          add_line_number(tree, s(:call, nil, :raise, s(:arglist, s(:str,"_get_local is a reserved method"))))
-        else
-          #call on mixed in method or passed in variable 
-          receiver = s(:self)
-          #rewrite local_call(arg1, arg2, argN) to self._get_local(:local_call, arg1, arg2, argN)
-          args = [:arglist]
-          args << s(:lit, tree[2])
-          for i in 1...tree[3].length
-            args << tree[3][i]
-          end
-          add_line_number(tree, s(:call, s(:self), :_get_local, process(args)))
+        #call on mixed in method or passed in variable 
+        receiver = s(:self)
+        #rewrite local_call(arg1, arg2, argN) to self._get_local(:local_call, arg1, arg2, argN)
+        args = [:arglist]
+        args << s(:lit, tree[2])
+        for i in 1...tree[3].length
+          args << tree[3][i]
         end
-        
+        add_line_number(tree, s(:call, s(:self), :_get_local, process(args)))
       else
         process(tree[1]) #try and raise more specific error
-        raise "Line #{tree.line}: You cannot call methods of non-local objects"
-        add_line_number(tree, s(:call, nil, :raise, s(:arglist, s(:str,"You cannot call methods of non-local objects"))))
+        raise SandboxedErb::CompileSecurityError, "Line #{tree.line}: You cannot call methods of non-local objects"
       end
 
     end
@@ -60,108 +49,95 @@ module SandboxedErb
     
     def process_iasgn(tree)
       puts tree.inspect if $DEBUG
-      raise "Line #{tree.line}: You cannot assign instance members in a template"
-      #add_line_number(tree, s(:call, nil, :raise, s(:arglist, s(:str,"You cannot assign instance members in a template"))))
+      raise SandboxedErb::CompileSecurityError, "Line #{tree.line}: You cannot assign instance members in a template"
     end
     
     def process_ivar(tree)
       puts tree.inspect if $DEBUG
-      raise "Line #{tree.line}: You cannot access instance members in a template"
-      add_line_number(tree, s(:call, nil, :raise, s(:arglist, s(:str,"You cannot access instance members in a template"))))
+      raise SandboxedErb::CompileSecurityError, "Line #{tree.line}: You cannot access instance members in a template"
     end
     
     def process_cvasgn(tree)
       puts tree.inspect if $DEBUG
-      raise "Line #{tree.line}: You cannot assign class members in a template"
-      add_line_number(tree, s(:call, nil, :raise, s(:arglist, s(:str,"You cannot assign class members in a template"))))
+      raise SandboxedErb::CompileSecurityError, "Line #{tree.line}: You cannot assign class members in a template"
     end
     
     def process_cvdecl(tree)
       puts tree.inspect if $DEBUG
-      raise "Line #{tree.line}: You cannot declare class members in a template"
-      add_line_number(tree, s(:call, nil, :raise, s(:arglist, s(:str,"You cannot declare class members in a template"))))
+      raise SandboxedErb::CompileSecurityError, "Line #{tree.line}: You cannot declare class members in a template"
     end
     
     def process_cdecl(tree)
       puts tree.inspect if $DEBUG
-      raise "Line #{tree.line}: You cannot define a constant in a template"
-      add_line_number(tree, s(:call, nil, :raise, s(:arglist, s(:str,"You cannot define a constant in a template"))))
+      raise SandboxedErb::CompileSecurityError, "Line #{tree.line}: You cannot define a constant in a template"
+    end
+    
+    def process_const(tree)
+      puts tree.inspect if $DEBUG
+      raise SandboxedErb::CompileSecurityError, "Line #{tree.line}: You cannot access a constant in a template"
     end
      
     def process_class(tree)
       puts tree.inspect if $DEBUG
-      raise "Line #{tree.line}: You cannot define a class in a template"
-      add_line_number(tree, s(:call, nil, :raise, s(:arglist, s(:str,"You cannot define a class in a template"))))
+      raise SandboxedErb::CompileSecurityError, "Line #{tree.line}: You cannot define a class in a template"
     end
     
     def process_module(tree)
       puts tree.inspect if $DEBUG
-      raise "Line #{tree.line}: You cannot define a module in a template"
-      add_line_number(tree, s(:call, nil, :raise, s(:arglist, s(:str,"You cannot define a module in a template"))))
+      raise SandboxedErb::CompileSecurityError, "Line #{tree.line}: You cannot define a module in a template"
     end
     
     def process_defn(tree)
-       puts tree.inspect if $DEBUG
-       raise "Line #{tree.line}: You cannot define a method in a template"
-       add_line_number(tree, s(:call, nil, :raise, s(:arglist, s(:str,"You cannot define a method in a template"))))
+      puts tree.inspect if $DEBUG
+      raise SandboxedErb::CompileSecurityError, "Line #{tree.line}: You cannot define a method in a template"
     end
     
     def process_defs(tree)
       puts tree.inspect if $DEBUG
-      raise "Line #{tree.line}: You cannot define a method in a template"
-      add_line_number(tree, s(:call, nil, :raise, s(:arglist, s(:str,"You cannot define a method in a template"))))
+      raise SandboxedErb::CompileSecurityError, "Line #{tree.line}: You cannot define a method in a template"
     end
     
     def process_super(tree)
       puts tree.inspect if $DEBUG
-      raise "Line #{tree.line}: You cannot call super in a template"
-      add_line_number(tree, s(:call, nil, :raise, s(:arglist, s(:str,"You cannot call super in a template"))))
+      raise SandboxedErb::CompileSecurityError, "Line #{tree.line}: You cannot call super in a template"
     end
     
     def process_gvar(tree)
       puts tree.inspect if $DEBUG
-      raise "Line #{tree.line}: You cannot access global variables in a template"
-      add_line_number(tree, s(:call, nil, :raise, s(:arglist, s(:str,"You cannot access global variables in a template"))))
+      raise SandboxedErb::CompileSecurityError, "Line #{tree.line}: You cannot access global variables in a template"
     end
     
     def process_gasgn(tree)
       puts tree.inspect if $DEBUG
-      raise "Line #{tree.line}: You cannot assign global variables in a template"
-      add_line_number(tree, s(:call, nil, :raise, s(:arglist, s(:str,"You cannot assign global variables in a template"))))
+      raise SandboxedErb::CompileSecurityError, "Line #{tree.line}: You cannot assign global variables in a template"
+    end
+    
+    def process_xstr(tree)
+      puts tree.inspect if $DEBUG
+      raise SandboxedErb::CompileSecurityError, "Line #{tree.line}: You cannot make a system call in a template"
     end
     
     def fallback_process(tree)
       puts tree.inspect if $DEBUG
       puts "Fallback called" if $DEBUG
-      raise "Line #{tree.line}: Invalid code used: #{tree.inspect}"
-      add_line_number(tree, s(:call, nil, :raise, s(:arglist, s(:str,"Invalid code used: #{tree.inspect}"))))
+      raise SandboxedErb::CompileSecurityError, "Line #{tree.line}: Invalid call used: #{tree[0]}"
     end
     
     
     #allowed
-    def process_block(tree)
-      passthrough tree
-    end
     
-    def process_lasgn(tree)
-      add_line_number(tree, passthrough(tree))
-    end
+    [[:block, true],[:lasgn, true],[:arglist, true],[:str, true],[:lit, true],[:lvar, true],[:attrasgn, true],[:for, true], [:while, true], [:do, true], [:if, true], [:case, true], [:when, true], [:array, true]].each { |action, add_line_number|
+      if add_line_number
+        define_method "process_#{action}".intern do |tree|
+          add_line_number(tree, passthrough(tree))
+        end
+      else
+        define_method "process_#{action}".intern do |tree|
+          passthrough tree
+        end
+      end
+    }
     
-    def process_arglist(tree)
-      passthrough tree
-    end
-    
-    def process_str(tree)
-      passthrough tree
-    end
-    
-    def process_lit(tree)
-      passthrough tree
-    end
-    
-    def process_lvar(tree)
-      add_line_number(tree, passthrough(tree))
-    end
     
     
   private
@@ -197,7 +173,8 @@ module SandboxedErb
     end
     
     def add_line_number(original_tree, processed_tree)
-      if original_tree.respond_to?(:line) &&  @last_line_number != original_tree.line
+      if original_tree.respond_to?(:line) &&  @last_line_number != original_tree.line && !original_tree.line.nil?
+        puts "@last_line_number (#{@last_line_number}) != original_tree.line (#{original_tree.line})" if $DEBUG
         @last_line_number = original_tree.line
         s(:block, s(:call, nil, :_sln, s(:arglist, s(:lit, original_tree.line))), processed_tree)
       else
