@@ -11,8 +11,7 @@ i have limited the allowed synax to a safer subset at compile time to reduce the
 The code does not run in a 'sandbox' like javascript, it is actually processed into 'safe' code then run using the normal ruby intepreter.
 
 1. The template is first processed by the ERB compiler to produce valid ruby code.
-2. The generated erb code is then processed to check that if conforms to the 'whitelist'of allowed syntax, as well as appending a 'to_sandbox' method onto every object (actually _sbm) to get a version of any object that is 
-safe to use in the sandbox.
+2. The generated erb code is then processed to check that if conforms to the 'whitelist'of allowed syntax, as well as appending a 'to_sandbox' method onto every object (actually _sbm) to get a version of any object that is safe to use in the sandbox.
 3. Run using ruby intepreter.
 
 
@@ -21,8 +20,8 @@ safe to use in the sandbox.
 2. I dont allow defining of any classes, methods or modules.
 3. You cannot access global variables or constants (or define them)
 4. It is assumed that any local variable is a 'sandboxed' object and that it is safe to call any method of it.
- 4a. The return value of any method is converted to the sandboxed object automatically (code added during processing)
- 4b. Object methods have been removed from sandboxed objects so no Kernel methods have been mixed in (__send__ etc)
+4a. The return value of any method is converted to the sandboxed object automatically (code added during processing)
+4b. Object methods have been removed from sandboxed objects so no Kernel methods have been mixed in (__send__ etc)
 
 
 == Contributing to sandboxed_erb
