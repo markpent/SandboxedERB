@@ -5,30 +5,37 @@
 
 Gem::Specification.new do |s|
   s.name = %q{sandboxed_erb}
-  s.version = "0.0.0"
+  s.version = "0.1.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["MarkPent"]
-  s.date = %q{2011-05-31}
+  s.date = %q{2011-06-04}
   s.description = %q{All your customers to extend your web application by exposing erb templates that can be safely run on your server within a sandbox.}
   s.email = %q{mark.pent@gmail.com}
   s.extra_rdoc_files = [
     "LICENSE.txt",
-    "README",
     "README.rdoc"
   ]
   s.files = [
     ".document",
     "Gemfile",
     "LICENSE.txt",
-    "README",
     "README.rdoc",
     "Rakefile",
     "VERSION",
     "lib/sandboxed_erb.rb",
+    "lib/sandboxed_erb/sandbox_methods.rb",
+    "lib/sandboxed_erb/system_mixins.rb",
+    "lib/sandboxed_erb/template.rb",
+    "lib/sandboxed_erb/tree_processor.rb",
+    "profile/vs_erb.rb",
+    "profile/vs_liquid.rb",
     "sandboxed_erb.gemspec",
     "test/helper.rb",
-    "test/test_sandboxed_erb.rb"
+    "test/test_compile_errors.rb",
+    "test/test_error_handling.rb",
+    "test/test_sandboxed_erb.rb",
+    "test/test_valid_templates.rb"
   ]
   s.homepage = %q{http://github.com/markpent/SandboxedERB}
   s.licenses = ["MIT"]
@@ -40,17 +47,23 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
+      s.add_runtime_dependency(%q<partialruby>, [">= 0.2.0"])
+      s.add_runtime_dependency(%q<ruby_parser>, [">= 2.0.6"])
       s.add_development_dependency(%q<shoulda>, [">= 0"])
       s.add_development_dependency(%q<bundler>, ["~> 1.0.0"])
       s.add_development_dependency(%q<jeweler>, ["~> 1.6.1"])
       s.add_development_dependency(%q<rcov>, [">= 0"])
     else
+      s.add_dependency(%q<partialruby>, [">= 0.2.0"])
+      s.add_dependency(%q<ruby_parser>, [">= 2.0.6"])
       s.add_dependency(%q<shoulda>, [">= 0"])
       s.add_dependency(%q<bundler>, ["~> 1.0.0"])
       s.add_dependency(%q<jeweler>, ["~> 1.6.1"])
       s.add_dependency(%q<rcov>, [">= 0"])
     end
   else
+    s.add_dependency(%q<partialruby>, [">= 0.2.0"])
+    s.add_dependency(%q<ruby_parser>, [">= 2.0.6"])
     s.add_dependency(%q<shoulda>, [">= 0"])
     s.add_dependency(%q<bundler>, ["~> 1.0.0"])
     s.add_dependency(%q<jeweler>, ["~> 1.6.1"])
