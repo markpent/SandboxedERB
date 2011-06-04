@@ -161,7 +161,7 @@ module SandboxedErb
       target = args.shift
       #check if the target is in the context
       if @_locals[target]
-        @_locals[target]._sbm
+        @_locals[target]
       elsif @_allowed_methods[target] #check if the target is defined in one of the mixin helper functions
         begin
           self.send(target, *args)

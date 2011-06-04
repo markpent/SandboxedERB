@@ -32,13 +32,13 @@ module SandboxedErb
       self
     end
     
-    #we need to lock this class down... any 
-    self.instance_methods.each do |sym|
-      old_warning_level = $-w  
-      $-w = nil #undefining some methods give warning.. lets suppress them...
-      sym = sym.intern
-      undef_method sym unless [:method_missing, :_sbm].include?(sym)
-      $-w = old_warning_level
+    def _invoke_sbm(sym, args)
+      begin
+        self.send(target, *args)
+      rescue Exception=>e
+        raise "Error calling #{target}: #{e.message}"
+      end
+      
     end
  
   end

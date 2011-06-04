@@ -38,16 +38,16 @@ module SandboxedErb
     
     def process_call(tree)
       puts tree.inspect if $DEBUG
-      if [:_sbm, :_get_local].include?(tree[2]) 
+      if [:_sbm].include?(tree[2]) 
         raise SandboxedErb::CompileSecurityError, "Line #{tree.line}: #{tree[2].to_s} is a reserved method"
-      elsif tree[0] == :call && tree[1] && (tree[1][0] == :lvar || tree[1][0] == :lit)
-        #this is a method call onto an object... just call sandboxed on the result to make sure we have the safe version
-        res = s(:call, s(:call, s(:call, tree[1], :_sbm, s(:arglist)), tree[2], process(tree[3])), :_sbm, s(:arglist))
-        add_line_number(tree, res)
-      elsif tree[0] == :call && tree[1] && (tree[1][0] == :call)
-        #call a method on return value of another call
-        res = s(:call, s(:call, process(tree[1]), tree[2], process(tree[3])), :_sbm, s(:arglist))
-        add_line_number(tree, res)
+      elsif tree[0] == :call && tree[1] 
+        #rewrite obj.call(arg1, arg2, argN) to obj._invoke_sbm(:call, arg1, arg2, argN)
+        args = [:arglist]
+        args << s(:lit, tree[2])
+        for i in 1...tree[3].length
+          args << tree[3][i]
+        end
+        add_line_number(tree, s(:call, process(tree[1]), :_sbm, process(args)))
       elsif tree[0] == :call && tree[1].nil? 
         #call on mixed in method or passed in variable 
         receiver = s(:self)
@@ -58,12 +58,7 @@ module SandboxedErb
           args << tree[3][i]
         end
         add_line_number(tree, s(:call, s(:self), :_get_local, process(args)))
-      else
-        process(tree[1]) #try and raise more specific error
-        puts tree.inspect if $DEBUG
-        raise SandboxedErb::CompileSecurityError, "Line #{tree.line}: You cannot call methods of non-local objects"
       end
-
     end
     
     #disallowed
