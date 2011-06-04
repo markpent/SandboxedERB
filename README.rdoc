@@ -30,9 +30,10 @@ The code does not run in a 'sandbox' like javascript, it is actually processed i
 
 == Benchmark Results
 Taken from profile/vs_liquid.rb
- eval template        0.290000   0.000000   0.290000 (  0.290000)
- sandboxed template   1.010000   0.000000   1.010000 (  1.012227)
- liquid template     30.940000   0.000000  30.940000 ( 30.963848)
+                          user     system      total        real
+ eval template        0.030000   0.000000   0.030000 (  0.024003)
+ sandboxed template   0.100000   0.000000   0.100000 (  0.100563)
+ liquid template      3.040000   0.020000   3.060000 (  3.116854)
 
 
 == Example
