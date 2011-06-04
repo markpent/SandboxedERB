@@ -16,7 +16,6 @@ module SandboxedErb
     end
     
     def process_call(tree)
-
       puts tree.inspect if $DEBUG
       if [:_sbm, :_get_local].include?(tree[2]) 
         raise SandboxedErb::CompileSecurityError, "Line #{tree.line}: #{tree[2].to_s} is a reserved method"
@@ -40,6 +39,7 @@ module SandboxedErb
         add_line_number(tree, s(:call, s(:self), :_get_local, process(args)))
       else
         process(tree[1]) #try and raise more specific error
+        puts tree.inspect if $DEBUG
         raise SandboxedErb::CompileSecurityError, "Line #{tree.line}: You cannot call methods of non-local objects"
       end
 
@@ -126,13 +126,15 @@ module SandboxedErb
     
     #allowed
     
-    [[:block, true],[:lasgn, true],[:arglist, true],[:str, true],[:lit, true],[:lvar, true],[:attrasgn, true],[:for, true], [:while, true], [:do, true], [:if, true], [:case, true], [:when, true], [:array, true]].each { |action, add_line_number|
+    [[:block, true],[:lasgn, true],[:arglist, true],[:str, true],[:lit, true],[:lvar, true],[:attrasgn, true],[:for, true], [:while, true], [:do, true], [:if, true], [:case, true], [:when, true], [:array, true], [:hash, true]].each { |action, add_line_number|
       if add_line_number
         define_method "process_#{action}".intern do |tree|
+          puts tree.inspect if $DEBUG
           add_line_number(tree, passthrough(tree))
         end
       else
         define_method "process_#{action}".intern do |tree|
+          puts tree.inspect if $DEBUG
           passthrough tree
         end
       end
