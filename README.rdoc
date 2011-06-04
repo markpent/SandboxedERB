@@ -16,12 +16,12 @@ The code does not run in a 'sandbox' like javascript, it is actually processed i
 
 
 == Why Is The Code Safe?
-1. I use a 'white list' of allowed sytax, so if ive missed something it will be denied.
-2. I dont allow defining of any classes, methods or modules.
-3. You cannot access global variables or constants (or define them)
-4. It is assumed that any local variable is a 'sandboxed' object and that it is safe to call any method of it.
-4a. The return value of any method is converted to the sandboxed object automatically (code added during processing)
-4b. Object methods have been removed from sandboxed objects so no Kernel methods have been mixed in (__send__ etc)
+* I use a 'white list' of allowed sytax, so if ive missed something it will be denied.
+* I dont allow defining of any classes, methods or modules.
+* You cannot access global variables or constants (or define them)
+* It is assumed that any local variable is a 'sandboxed' object and that it is safe to call any method of it.
+  * The return value of any method is converted to the sandboxed object automatically (code added during processing)
+  * Object methods have been removed from sandboxed objects so no Kernel methods have been mixed in (__send__ etc)
 
 
 == Contributing to sandboxed_erb
