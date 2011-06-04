@@ -50,7 +50,10 @@ Taken from profile/vs_liquid.rb
  liquid template      3.040000   0.020000   3.060000 (  3.116854)
 
 
-== Example
+== Examples
+
+=== Calling some sandboxed methods
+You can define a class and specify what methods are safe to use from within the sandbox using the sandboxed_methods function.
  
  #Define a class we want accessable from the sandbox
  class SandboxedClass
@@ -80,8 +83,6 @@ Taken from profile/vs_liquid.rb
  
 === Mixins / Helper functions
 To add helper functions to the template, you can define the helper function mixins when the template is instantiated.
-
-example:
 
  #define helper functions in a module
  module MixinTest
@@ -121,6 +122,6 @@ example:
 
 == Copyright
 
-Copyright (c) 2011 MarkPent. See LICENSE.txt for
+Copyright (c) 2011 Mark Pentand. See LICENSE.txt for
 further details.
 
