@@ -2,7 +2,7 @@
 
 This is a gem that allows you to run an ERB template in a sandbox so it is safe to expose these templates to your customers to allow them to customise your application (or any other use you can think of).
 
-This has been inspired by http://github.com/tario/shikashi, a ruby sandbox which uses the evalhook gem to intercept an rewrite every ruby call to go through an access check at runtime.
+This has been inspired by http://github.com/tario/shikashi, a ruby sandbox which uses the evalhook gem to intercept and rewrite every ruby call to go through an access check at runtime.
 It was originally designed to run in the shikashi sandbox, but was found to be too slow as every call was being intercepted and analysed at runtime. Because a templating language does not need everything ruby offers, 
 i have limited the allowed synax to a safer subset at compile time to reduce the number of runtime checks required.
 
@@ -20,7 +20,7 @@ The code does not run in a 'sandbox' like javascript, it is actually processed i
 
 == Why Is The Code Safe?
 * I use a 'white list' of allowed sytax, so if I've missed something it will be denied.
-* I dont allow defining of any classes, methods or modules.
+* I dont allow the defining of any classes, methods or modules.
 * You cannot access global variables or constants (or define them)
 
 
@@ -41,7 +41,7 @@ The code does not run in a 'sandbox' like javascript, it is actually processed i
  end
  
  #a basic template that calls 'method_i_can_call' on an instance of SandboxedClass passed in below
- str_template = "test = <%=sandboxed_class.method_i_can_call("some value")%>"
+ str_template = "test = <%=sandboxed_class.method_i_can_call('some value')%>"
 
  template = SandboxedErb::Template.new
  #compile the template so it can get run multiple times
