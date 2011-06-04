@@ -22,6 +22,17 @@ The code does not run in a 'sandbox' like javascript, it is actually processed i
 * I use a 'white list' of allowed sytax, so if I've missed something it will be denied.
 * I dont allow the defining of any classes, methods or modules.
 * You cannot access global variables or constants (or define them)
+* Every call is routed through the _sbm method, so if an non-safe object is somehow called, it wont have the _sbm method, so it will error.
+
+== Optimisations
+* The ERB template generates many _erbout.concat calls, these are not routed through _sbm.
+* to_s is called heaps, it is assumed .to_s is safe to all (without arguments) an any object.
+
+== Benchmark Results
+Taken from profile/vs_liquid.rb
+ eval template        0.290000   0.000000   0.290000 (  0.290000)
+ sandboxed template   1.010000   0.000000   1.010000 (  1.012227)
+ liquid template     30.940000   0.000000  30.940000 ( 30.963848)
 
 
 == Example
