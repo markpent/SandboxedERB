@@ -22,22 +22,47 @@ along with shikashi.  if not, see <http://www.gnu.org/licenses/>.
 class Module
   def sandboxed_methods(*allowed_methods)
     
-    @_sb_allowed_methods_map = {}
+    _sb_allowed_methods_map = {}
     allowed_methods.each { |meth|
-      @_sb_allowed_methods_map[meth] = true
+      _sb_allowed_methods_map[meth.to_s.intern] = true
     }
 
     define_method :_sbm do |meth, *args|
-      if @_sb_allowed_methods_map[meth]
+      if _sb_allowed_methods_map[meth]
         begin
           self.__send__(meth, *args)
         rescue Exception=>e
           raise "Error calling #{target}: #{e.message}"
         end
       else
-        raise SandboxedErb::MissingMethodError, "Unknown method '#{meth_id}' on object '#{@object.class.name}'"
+        puts _sb_allowed_methods_map.inspect if $DEBUG
+        raise SandboxedErb::MissingMethodError, "Unknown method '#{meth}' on object '#{self.class.name}'"
       end
     end
+  end
+  
+  
+  #shortcut to allow everything except a few methods
+  #this will not include any superclass methods
+  #make sure this is called AFTER all methods are defined in the class.
+  def not_sandboxed_methods(include_superclasses = false, *disallowed_methods)
+
+    __the_methods_to_check = public_instance_methods(false)
+    if include_superclasses
+      clz = self.superclass
+      while !clz.nil?
+        unless clz == Object
+          __the_methods_to_check += clz.public_instance_methods(false)
+        end
+        clz = clz.superclass
+      end
+    end
+    
+    
+    __the_methods_to_check.uniq!
+    
+    sandboxed_methods(*__the_methods_to_check)
+    
   end
 
 end

@@ -48,12 +48,12 @@ class TestSandboxedErb < Test::Unit::TestCase
       end
     end
     
-    tc = TestClass.new._sbm
-    assert_equal "A", tc.ok_to_call
+    tc = TestClass.new
+    assert_equal "A", tc._sbm(:ok_to_call)
     
     
     assert_raise(SandboxedErb::MissingMethodError) {
-      tc.not_ok_to_call.to_s
+      tc._sbm(:not_ok_to_call).to_s
     } 
     
   end
@@ -143,7 +143,6 @@ class TestSandboxedErb < Test::Unit::TestCase
     template = SandboxedErb::Template.new
     assert_equal true, template.compile(str_template)
     assert_equal nil, template.run(nil, {:test_object=>TestObject.new})
-    
     assert_equal "Error on line 1: Unknown method 'valid_method=' on object 'TestSandboxedErb::TestObject'", template.get_error
   end
   

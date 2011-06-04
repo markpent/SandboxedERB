@@ -36,11 +36,16 @@ module SandboxedErb
       @last_line_number = 0
     end
     
+    #we treat this same as a call
+    def process_attrasgn(tree)
+      process_call(tree)
+    end
+    
     def process_call(tree)
       puts tree.inspect if $DEBUG
       if [:_sbm].include?(tree[2]) 
         raise SandboxedErb::CompileSecurityError, "Line #{tree.line}: #{tree[2].to_s} is a reserved method"
-      elsif tree[0] == :call && tree[1] 
+      elsif tree[1] 
         #rewrite obj.call(arg1, arg2, argN) to obj._invoke_sbm(:call, arg1, arg2, argN)
         args = [:arglist]
         args << s(:lit, tree[2])
@@ -48,7 +53,7 @@ module SandboxedErb
           args << tree[3][i]
         end
         add_line_number(tree, s(:call, process(tree[1]), :_sbm, process(args)))
-      elsif tree[0] == :call && tree[1].nil? 
+      else
         #call on mixed in method or passed in variable 
         receiver = s(:self)
         #rewrite local_call(arg1, arg2, argN) to self._get_local(:local_call, arg1, arg2, argN)
@@ -142,7 +147,7 @@ module SandboxedErb
     
     #allowed
     
-    [[:block, true],[:lasgn, true],[:arglist, true],[:str, true],[:lit, true],[:lvar, true],[:attrasgn, true],[:for, true], [:while, true], [:do, true], [:if, true], [:case, true], [:when, true], [:array, true], [:hash, true]].each { |action, add_line_number|
+    [[:block, true],[:lasgn, true],[:arglist, true],[:str, true],[:lit, true],[:lvar, true],[:for, true], [:while, true], [:do, true], [:if, true], [:case, true], [:when, true], [:array, true], [:hash, true]].each { |action, add_line_number|
       if add_line_number
         define_method "process_#{action}".intern do |tree|
           puts tree.inspect if $DEBUG

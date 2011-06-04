@@ -22,38 +22,16 @@ along with shikashi.  if not, see <http://www.gnu.org/licenses/>.
 
 #add sandboxed method to basic inbuilt objects
 
-class String
-  def to_sandboxed
-    self
-  end
-end
-
-class Fixnum
-  def to_sandboxed
-    self
-  end
-end
-
-class Array
-  def to_sandboxed
-    self  
-  end
-end
-
-class Hash
-  def to_sandboxed
-    self  
-  end
-end
-
-class FalseClass
-  def to_sandboxed
-    self  
-  end
-end
-
-class TrueClass
-  def to_sandboxed
-    self  
-  end
-end
+String.not_sandboxed_methods true
+Fixnum.not_sandboxed_methods true
+Float.not_sandboxed_methods true
+Range.not_sandboxed_methods true
+Symbol.not_sandboxed_methods true
+Time.not_sandboxed_methods true
+Date.not_sandboxed_methods true
+DateTime.not_sandboxed_methods true
+NilClass.not_sandboxed_methods true
+Array.not_sandboxed_methods true
+Hash.not_sandboxed_methods true
+FalseClass.not_sandboxed_methods true
+TrueClass.not_sandboxed_methods true

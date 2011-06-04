@@ -19,6 +19,7 @@ class TestErrorHandling < Test::Unit::TestCase
     template = SandboxedErb::Template.new
     template.compile(str_template)
     assert_equal nil,template.run(nil, {:tc=>TestClass.new})
+
     assert_equal "Error on line 1: Unknown method 'not_ok_to_call' on object 'TestErrorHandling::TestClass'", template.get_error
 
   end

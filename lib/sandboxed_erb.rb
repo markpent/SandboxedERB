@@ -24,7 +24,6 @@ require "erb"
 require "partialruby"
 require "sandboxed_erb/template"
 require "sandboxed_erb/tree_processor"
-require "sandboxed_erb/sandboxed"
 require "sandboxed_erb/sandbox_methods"
 require "sandboxed_erb/system_mixins"
 
