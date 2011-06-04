@@ -34,10 +34,9 @@ Source:
 Processed Code
  email_address = user._sbm(:login) + "@" + user._sbm(:domain, :local_domain)
  
-_smb will chech that the symbol of the function to call (:login and :domain) has been explicitly allowed for that object using the sandboxed_methods module function (example below).
+_smb will check that the symbol of the function to call (:login and :domain) has been explicitly allowed for that object using the sandboxed_methods module function (example below).
 If it has been allowed, it is assumed that the method getting called is safe (developers responsibility!) and that it can handle the arguments (which should be safe because you cannot define methods etc in a sandbox). 
  
-
 
 == Optimisations
 * The ERB template generates many _erbout.concat calls, these are not routed through _sbm.
@@ -79,6 +78,35 @@ Taken from profile/vs_liquid.rb
  #result = "test = some value passed in"
  
  
+=== Mixins / Helper functions
+To add helper functions to the template, you can define the helper function mixins when the template is instantiated.
+
+example:
+
+ #define helper functions in a module
+ module MixinTest
+   def test_mixin_method 
+     "TEST #{@controller.some_value}"  #@controller is a 'context' object 
+   end
+ end
+ 
+ #define a 'context' object that the helper function will have access to
+ class FauxController
+   def some_value
+     "ABC"  
+   end
+ end
+
+ faux_controller = FauxController.new
+
+ str_template = "mixin = <%= test_mixin_method %>"
+ #declare the template, passing in the MixinTest module so its test_mixin_method will be available as a helper function
+ template = SandboxedErb::Template.new([MixinTest])
+ template.compile(str_template)
+ #pass the FauxController object as a context object called @controller (the keys are converted to member variables)
+ result = template.run({:controller=>faux_controller}, {}) 
+
+ #result =  "mixin = TEST ABC"
  
 
 == Contributing to sandboxed_erb
