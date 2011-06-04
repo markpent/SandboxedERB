@@ -6,11 +6,6 @@ This has been inspired by http://github.com/tario/shikashi, a ruby sandbox which
 It was originally designed to run in the shikashi sandbox, but was found to be too slow as every call was being intercepted and analysed at runtime. Because a templating language does not need everything ruby offers, 
 i have limited the allowed synax to a safer subset at compile time to reduce the number of runtime checks required.
 
-== Why?
-I'm currently using Liquid templates in my application to generate emails/pdfs. I'm planning on taking the next step and using liquid to skin (and offer customers to skin) thier website. This then raises the issue of performance and functionailty. 
-Liquid does not allow passing parameters to drops easily, and I have found assigning/updating variables within templates to be messy (i.e. keeping a running counter using +=). I have also hit issue using complex if statements. 
-Liquid has been great for what i have already achieved, its just starting to show its limits....
-
 
 == How It Works
 

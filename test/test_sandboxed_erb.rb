@@ -130,6 +130,18 @@ class TestSandboxedErb < Test::Unit::TestCase
     assert_equal "Error on line 1: Unknown method '__send__' on object 'TestSandboxedErb::TestObject'", template.get_error
   end
   
+  
+  should "not be able to call Object methods on literal values" do
+    str_template = "test=<%=2.__send__(:object_id)%>"
+    
+
+    template = SandboxedErb::Template.new
+    assert_equal true, template.compile(str_template)
+    assert_equal nil, template.run(nil, {})
+    
+    assert_equal "Error on line 1: Unknown method '__send__' on object 'Fixnum'", template.get_error
+  end
+  
   should "not be able to set attributes of objects" do
     str_template = "test <%test_object.valid_method='ABC'%>"
     
