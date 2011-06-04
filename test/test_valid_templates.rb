@@ -96,5 +96,75 @@ class TestValidTemplates < Test::Unit::TestCase
     assert_equal "3", result
   end
   
+  should "allow defining array" do
+    str_template = "<% 
+    test = [1,2,3,4]
+    %><%=test[2]%>"
+
+    template = SandboxedErb::Template.new
+    result = template.compile(str_template)
+    assert_equal nil, template.get_error
+    
+    assert_equal true, result
+    
+    result = template.run(nil,{})
+    
+    assert_equal nil, template.get_error
+    assert_equal "3", result
+  end
+  
+  should "allow setting array value" do
+    str_template = "<% 
+    test = [1,2,3,4]
+    test[2] = 8
+    %><%=test[2]%>"
+
+    template = SandboxedErb::Template.new
+    result = template.compile(str_template)
+    assert_equal nil, template.get_error
+    
+    assert_equal true, result
+    
+    result = template.run(nil,{})
+    
+    assert_equal nil, template.get_error
+    assert_equal "8", result
+  end
+  
+  should "allow defining hash" do
+    str_template = "<% 
+    test = {1=>2,2=>3,3=>4,4=>5}
+    %><%=test[2]%>"
+
+    template = SandboxedErb::Template.new
+    result = template.compile(str_template)
+    assert_equal nil, template.get_error
+    
+    assert_equal true, result
+    
+    result = template.run(nil,{})
+    
+    assert_equal nil, template.get_error
+    assert_equal "3", result
+  end
+  
+  should "allow setting hash value" do
+    str_template = "<% 
+    test = {1=>2,2=>3,3=>4,4=>5}
+    test[2] = 8
+    %><%=test[2]%>"
+
+    template = SandboxedErb::Template.new
+    result = template.compile(str_template)
+    assert_equal nil, template.get_error
+    
+    assert_equal true, result
+    
+    result = template.run(nil,{})
+    
+    assert_equal nil, template.get_error
+    assert_equal "8", result
+  end
+  
   
 end

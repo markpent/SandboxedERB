@@ -96,6 +96,57 @@ class TestSandboxedErb < Test::Unit::TestCase
     assert_equal "Error on line 4: Unknown method: eval", template.get_error
   end
   
+  should "not be able to call Object methods: object_id" do
+    str_template = "test=<%=test_object.object_id%>"
+    
+    class TestObject
+      sandboxed_methods :valid_method
+      def valid_method
+        "ABC"  
+      end
+    end
+    
+    template = SandboxedErb::Template.new
+    assert_equal true, template.compile(str_template)
+    assert_equal nil, template.run(nil, {:test_object=>TestObject.new})
+    
+    assert_equal "Error on line 1: Unknown method 'object_id' on object 'TestSandboxedErb::TestObject'", template.get_error
+  end
+  
+  should "not be able to call Object methods: send" do
+    str_template = "test=<%=test_object.__send__(:valid_method)%>"
+    
+    class TestObject
+      sandboxed_methods :valid_method
+      def valid_method
+        "ABC"  
+      end
+    end
+    
+    template = SandboxedErb::Template.new
+    assert_equal true, template.compile(str_template)
+    assert_equal nil, template.run(nil, {:test_object=>TestObject.new})
+    
+    assert_equal "Error on line 1: Unknown method '__send__' on object 'TestSandboxedErb::TestObject'", template.get_error
+  end
+  
+  should "not be able to set attributes of objects" do
+    str_template = "test <%test_object.valid_method='ABC'%>"
+    
+    class TestObject
+      sandboxed_methods :valid_method
+      def valid_method
+        "ABC"  
+      end
+    end
+    
+    template = SandboxedErb::Template.new
+    assert_equal true, template.compile(str_template)
+    assert_equal nil, template.run(nil, {:test_object=>TestObject.new})
+    
+    assert_equal "Error on line 1: Unknown method 'valid_method=' on object 'TestSandboxedErb::TestObject'", template.get_error
+  end
+  
   
   should "allow mixins" do
     
