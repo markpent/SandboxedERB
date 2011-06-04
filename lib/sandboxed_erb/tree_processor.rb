@@ -45,6 +45,10 @@ module SandboxedErb
       puts tree.inspect if $DEBUG
       if [:_sbm].include?(tree[2]) 
         raise SandboxedErb::CompileSecurityError, "Line #{tree.line}: #{tree[2].to_s} is a reserved method"
+      elsif tree[1] && tree[1][0] == :lvar && tree[1][1] == :_erbout && tree[2] == :concat #optimisation:call concat on _erbout is safe... dont need to route through _sbm
+        add_line_number(tree, s(tree[0], tree[1], tree[2], process(tree[3])))
+      elsif tree[1] && tree[2] == :to_s && tree[3][0] == :arglist && tree[3].length == 1 #optimisation:call to_s on an object is safe... dont need to route through _sbm
+        add_line_number(tree, s(tree[0], process(tree[1]), tree[2], tree[3]))
       elsif tree[1] 
         #rewrite obj.call(arg1, arg2, argN) to obj._invoke_sbm(:call, arg1, arg2, argN)
         args = [:arglist]
