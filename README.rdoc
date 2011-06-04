@@ -20,10 +20,24 @@ The code does not run in a 'sandbox' like javascript, it is actually processed i
 
 
 == Why Is The Code Safe?
-* I use a 'white list' of allowed sytax, so if I've missed something it will be denied.
+* I use a 'white list' of allowed syntax, so if I've missed something it will be denied.
 * I dont allow the defining of any classes, methods or modules.
 * You cannot access global variables or constants (or define them)
 * Every call is routed through the _sbm method, so if an non-safe object is somehow called, it wont have the _sbm method, so it will error.
+
+== _sbm (SandBoxed Method)
+Heres an example of the generated code after is has been processed:
+
+Source:
+ email_address = user.login + "@" + user.domain(:local_domain)
+ 
+Processed Code
+ email_address = user._sbm(:login) + "@" + user._sbm(:domain, :local_domain)
+ 
+_smb will chech that the symbol of the function to call (:login and :domain) has been explicitly allowed for that object using the sandboxed_methods module function (example below).
+If it has been allowed, it is assumed that the method getting called is safe (developers responsibility!) and that it can handle the arguments (which should be safe because you cannot define methods etc in a sandbox). 
+ 
+
 
 == Optimisations
 * The ERB template generates many _erbout.concat calls, these are not routed through _sbm.
