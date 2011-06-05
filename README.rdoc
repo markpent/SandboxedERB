@@ -6,6 +6,8 @@ This has been inspired by http://github.com/tario/shikashi, a ruby sandbox which
 It was originally designed to run in the shikashi sandbox, but was found to be too slow as every call was being intercepted and analysed at runtime. Because a templating language does not need everything ruby offers, 
 i have limited the allowed synax to a safer subset at compile time to reduce the number of runtime checks required.
 
+== To install
+ sudo gem install sandboxed_erb
 
 == How It Works
 
