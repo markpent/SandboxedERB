@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{sandboxed_erb}
-  s.version = "0.1.0"
+  s.version = "0.2.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["MarkPent"]
-  s.date = %q{2011-06-04}
+  s.date = %q{2011-06-05}
   s.description = %q{All your customers to extend your web application by exposing erb templates that can be safely run on your server within a sandbox.}
   s.email = %q{mark.pent@gmail.com}
   s.extra_rdoc_files = [
@@ -23,6 +23,12 @@ Gem::Specification.new do |s|
     "README.rdoc",
     "Rakefile",
     "VERSION",
+    "example/controller.rb",
+    "example/example.rb",
+    "example/listing.sbhtml",
+    "example/note.rb",
+    "example/users.rb",
+    "example/view_notes.sbhtml",
     "lib/sandboxed_erb.rb",
     "lib/sandboxed_erb/sandbox_methods.rb",
     "lib/sandboxed_erb/system_mixins.rb",
