@@ -15,7 +15,7 @@ The code does not run in a 'sandbox' like javascript, it is actually processed i
 2. The generated erb code is then processed to check that if conforms to the 'whitelist'of allowed syntax.
 3. Every invokation on an object is converted from some_object.some_method(arg1,argn) to some_object._sbm(:some_method,arg1,argn).
 4. Run using ruby intepreter.
-5. The _sbm method checks at runtime that the method is allowed as per rules defined by 'sandboxed_methods' and 'not_sandboxed_methods'
+5. The _sbm method checks at runtime that the method is allowed as per rules defined by 'Module.sandboxed_methods' and 'Module.not_sandboxed_methods'
 
 
 
@@ -32,7 +32,7 @@ Source:
  email_address = user.login + "@" + user.domain(:local_domain)
  
 Processed Code
- email_address = user._sbm(:login) + "@" + user._sbm(:domain, :local_domain)
+ email_address = user._sbm(:login)._sbm(:+,"@")._sbm(:+,user._sbm(:domain, :local_domain))
  
 _smb will check that the symbol of the function to call (:login and :domain) has been explicitly allowed for that object using the sandboxed_methods module function (example below).
 If it has been allowed, it is assumed that the method getting called is safe (developers responsibility!) and that it can handle the arguments (which should be safe because you cannot define methods etc in a sandbox). 
