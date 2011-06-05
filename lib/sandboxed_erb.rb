@@ -29,11 +29,17 @@ require "sandboxed_erb/system_mixins"
 
 
 module SandboxedErb
-  class Error < ::StandardError; end
+  class Error < ::StandardError #:nodoc: all
+  end
   
-  class CompileError < Error; end
-  class CompileSecurityError < Error; end
-  class RuntimeError < Error; end
-  class RuntimeSecurityError < Error; end
-  class MissingMethodError < Error; end
+  class CompileError < Error #:nodoc: all
+  end
+  class CompileSecurityError < Error #:nodoc: all
+  end
+  class RuntimeError < Error #:nodoc: all
+  end
+  class RuntimeSecurityError < Error #:nodoc: all
+  end
+  class MissingMethodError < Error #:nodoc: all
+  end
 end

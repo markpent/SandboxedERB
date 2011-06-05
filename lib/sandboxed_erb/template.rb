@@ -23,12 +23,40 @@ require "erb"
 require "partialruby"
 
 module SandboxedErb
+  
+#This class represents a template which can be compiled then run multiple times.
+#
+#When declaring a template, pass an array of Mixin classes to the contructor to allow the template access to the Mixin methods.
+#
+#Example
+# module ExampleHelper
+#   def format_date(date, format)
+#     if format == :short_date
+#       date.strftime("%d %b %Y %H:%M")
+#     else
+#       "unknown format: #{format}"
+#     end
+#   end
+#
+#    def current_time
+#      DateTime.now
+#    end
+# end
+#
+# template = SandboxedErb::Template.new([ExampleHelper])
+# #the template will now have access to the format_date() and current_time() helper function
+# template.compile('the date = <%=format_date(current_time, :short_date)%>')
+
   class Template
     
+    #minins is an array of helper classes which expose methods to the template 
     def initialize(mixins = [])
       @mixins = mixins.collect { |clz| "include #{clz.name}"}.join("\n")
     end
     
+    #compile the template
+    #
+    #if the template does not compile, false is returned and get_error should be called to get the compile error.
     def compile(str_template)
       
       erb_template = compile_erb_template(str_template)
@@ -63,6 +91,10 @@ module SandboxedErb
       
     end
     
+    #run a compiled template
+    #* context: A map of context objects that will be available to helper functions and instance variables, and available to sandboxed objects through the set_sandbox_context callback.
+    #* locals: A map of local objects that will be available to the template, and available to sandboxed objects through the set_sandbox_context callback as the :locals entry.
+    #If the template runs successfully, the geneated content is returned. If an error occures, nil is returned and get_error should be called to get the error information.
     def run(context, locals)
       begin
         @template_runner.run(context, locals)
@@ -72,8 +104,7 @@ module SandboxedErb
       end
     end
     
-    #compile as normal erb template but using out own buffer object (_tbuf)
-    def compile_erb_template(str_template)
+    def compile_erb_template(str_template) #:nodoc:
       ecompiler = ERB::Compiler.new(nil)
       
       ecompiler.put_cmd = "_erbout.concat"
@@ -91,7 +122,7 @@ module SandboxedErb
       ecompiler.compile(str_template)
     end
     
-    def sandbox_code(erb_template)
+    def sandbox_code(erb_template) #:nodoc:
       @error = nil
       tree = nil
       begin
@@ -130,7 +161,7 @@ module SandboxedErb
     end
   end
   
-  class TemplateBase
+  class TemplateBase #:nodoc: all
     def initialize
       @_allowed_methods = {}
       self.class.included_modules.each { |mod|
@@ -143,17 +174,29 @@ module SandboxedErb
     end
     
     def run(context, locals)
+      context = {} if context.nil?
+      context[:locals] = locals
       unless context.nil?
         for k in context.keys
           eval("@#{k} = context[k]")
         end
       end
+      @_sb_context = context
       @_locals = locals
       @_line = 1
       begin
         run_internal
       rescue Exception=>e
         raise "Error on line #{@_line}: #{e.message}"
+      ensure
+        #cleanup the context
+        unless context.nil?
+          for k in context.keys
+            eval("@#{k} = nil")
+          end
+        end
+         @_sb_context = nil
+         @_locals = nil
       end
     end
     

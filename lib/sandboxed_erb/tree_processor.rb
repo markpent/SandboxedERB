@@ -24,7 +24,7 @@ require "partialruby"
 require "sexp_processor"
 
 module SandboxedErb
-  class TreeProcessor < SexpProcessor
+  class TreeProcessor < SexpProcessor #:nodoc: all
     
     def initialize
       super()
@@ -53,10 +53,11 @@ module SandboxedErb
         #rewrite obj.call(arg1, arg2, argN) to obj._invoke_sbm(:call, arg1, arg2, argN)
         args = [:arglist]
         args << s(:lit, tree[2])
+        args << s(:ivar, "@_sb_context".intern)
         for i in 1...tree[3].length
-          args << tree[3][i]
+          args << process(tree[3][i])
         end
-        add_line_number(tree, s(:call, process(tree[1]), :_sbm, process(args)))
+        add_line_number(tree, s(:call, process(tree[1]), :_sbm, args))
       else
         #call on mixed in method or passed in variable 
         receiver = s(:self)
@@ -151,7 +152,7 @@ module SandboxedErb
     
     #allowed
     
-    [[:block, true],[:lasgn, true],[:arglist, true],[:str, true],[:lit, true],[:lvar, true],[:for, true], [:while, true], [:do, true], [:if, true], [:case, true], [:when, true], [:array, true], [:hash, true]].each { |action, add_line_number|
+    [[:block, true],[:lasgn, true],[:arglist, true],[:str, true],[:dstr, true],[:evstr, true],[:lit, true],[:lvar, true],[:for, true], [:while, true], [:do, true], [:if, true], [:case, true], [:when, true], [:array, true], [:hash, true]].each { |action, add_line_number|
       if add_line_number
         define_method "process_#{action}".intern do |tree|
           puts tree.inspect if $DEBUG
