@@ -1,0 +1,9 @@
+<h1>Viewing Notes For <%=user.first_name%> <%=user.last_name%></h1>
+
+<% for note in user.notes %>
+<div>
+  <h2><%=note.subject%></h2>
+  <h3>From <%=note.from.first_name%> <%=note.from.last_name%> at <%=format_date(note.at, :short_date)%></h3>
+  <p><%=note.message%>
+</div>
+<%end%>

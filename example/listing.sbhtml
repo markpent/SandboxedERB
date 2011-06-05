@@ -1,0 +1,26 @@
+<h1>User Notes</h1>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Email</th>
+    <th>Phone</th>
+    <th></th>
+  </tr>
+  <% for user in users %>
+    <tr>
+      <td>
+        <%=link_to "#{user.first_name} #{user.last_name}",  user.url_for(:edit)%>
+      </td>
+      <td>
+        <%=link_to user.email, "mailto: #{user.email}"%>
+      </td>
+      <td>
+        <%= user.phone%>
+      </td>
+      <td>
+        <%=link_to "Send Message",  user.url_for(:send_message)%>
+      </td>
+    </tr>
+  <%end%>
+</table>
