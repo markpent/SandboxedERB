@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["MarkPent"]
   s.date = %q{2011-06-05}
-  s.description = %q{All your customers to extend your web application by exposing erb templates that can be safely run on your server within a sandbox.}
+  s.description = %q{Run erb templates safely within a sandbox.}
   s.email = %q{mark.pent@gmail.com}
   s.extra_rdoc_files = [
     "LICENSE.txt",
