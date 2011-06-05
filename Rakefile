@@ -18,7 +18,7 @@ Jeweler::Tasks.new do |gem|
   gem.homepage = "http://github.com/markpent/SandboxedERB"
   gem.license = "MIT"
   gem.summary = %Q{Run an erb template in a sandbox.}
-  gem.description = %Q{All your customers to extend your web application by exposing erb templates that can be safely run on your server within a sandbox.}
+  gem.description = %Q{Run erb templates safely within a sandbox.}
   gem.email = "mark.pent@gmail.com"
   gem.authors = ["MarkPent"]
   # dependencies defined in Gemfile
