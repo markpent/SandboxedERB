@@ -69,23 +69,49 @@ class Module
   #     "this is NOT ok to call"
   #   end
   # end
-  def not_sandboxed_methods(include_superclasses = false, *disallowed_methods)
+  def not_sandboxed_methods(include_superclasses = false, allowed_mixins=[], *disallowed_methods)
 
     __the_methods_to_check = public_instance_methods(false)
     if include_superclasses
       clz = self.superclass
       while !clz.nil?
         unless clz == Object
+          puts "#{self.name}: #{clz.name}: #{clz.public_instance_methods(false).inspect}"
           __the_methods_to_check += clz.public_instance_methods(false)
         end
         clz = clz.superclass
+      end
+      
+      if allowed_mixins.length > 0
+        #we include any mixins
+        for m in self.included_modules
+          if allowed_mixins.include?(m)
+            puts "#{self.name}: #{m.name}: #{m.public_instance_methods(false).inspect}"
+            __the_methods_to_check += m.public_instance_methods(false)
+          end
+        end
       end
     end
     
     
     __the_methods_to_check.uniq!
     
+    unless disallowed_methods.nil? || disallowed_methods.length == 0
+      not_bang = false
+      if disallowed_methods.include?(:bang_methods) #just remove all xxx! methods that modify in place
+        __the_methods_to_check.reject! { |meth| meth.to_s[-1, 1] == "!"}
+        not_bang = true
+      end
+      unless not_bang || disallowed_methods.length > 1
+        __the_methods_to_check.reject! { |meth| disallowed_methods.include?(meth)}
+      end
+    end
+    
+    puts "#{self.name}: #{__the_methods_to_check.inspect}"
+     
     sandboxed_methods(*__the_methods_to_check)
+    
+    
     
   end
 

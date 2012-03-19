@@ -130,6 +130,23 @@ class TestSandboxedErb < Test::Unit::TestCase
     assert_equal "Error on line 1: Unknown method '__send__' on object 'TestSandboxedErb::TestObject'", template.get_error
   end
   
+  should "not be able to call bang methods on system classes" do
+    str_template = "test=<%=[1,2,3].reject!{ |i| i==2} %>"
+    
+    class TestObject
+      sandboxed_methods :valid_method
+      def valid_method
+        "ABC"  
+      end
+    end
+    
+    template = SandboxedErb::Template.new
+    assert_equal true, template.compile(str_template), template.get_error
+    assert_equal nil, template.run(nil, {:test_object=>TestObject.new})
+    
+    assert_equal "Error on line 1: Unknown method 'reject!' on object 'Array'", template.get_error
+  end
+  
   
   should "not be able to call Object methods on literal values" do
     str_template = "test=<%=2.__send__(:object_id)%>"
@@ -157,7 +174,6 @@ class TestSandboxedErb < Test::Unit::TestCase
     assert_equal nil, template.run(nil, {:test_object=>TestObject.new})
     assert_equal "Error on line 1: Unknown method 'valid_method=' on object 'TestSandboxedErb::TestObject'", template.get_error
   end
-  
   
   should "allow mixins" do
     
