@@ -49,11 +49,11 @@ class TestSandboxedErb < Test::Unit::TestCase
     end
     
     tc = TestClass.new
-    assert_equal "A", tc._sbm(:ok_to_call)
+    assert_equal "A", tc._sbm(:ok_to_call, {})
     
     
     assert_raise(SandboxedErb::MissingMethodError) {
-      tc._sbm(:not_ok_to_call).to_s
+      tc._sbm(:not_ok_to_call, {}).to_s
     } 
     
   end
