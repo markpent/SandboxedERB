@@ -152,7 +152,7 @@ module SandboxedErb
     
     #allowed
     
-    [[:block, true],[:lasgn, true],[:arglist, true],[:str, true],[:dstr, true],[:evstr, true],[:lit, true],[:lvar, true],[:for, true], [:while, true], [:do, true], [:if, true], [:case, true], [:when, true], [:array, true], [:hash, true],[:iter, true]].each { |action, add_line_number|
+    [[:block, true],[:lasgn, true],[:arglist, true],[:str, true],[:dstr, true],[:evstr, true],[:lit, true],[:lvar, true],[:for, true], [:while, true], [:do, true], [:if, true], [:case, true], [:when, true], [:array, true], [:hash, true],[:iter, true],[:and, true],[:or, true]].each { |action, add_line_number|
       if add_line_number
         define_method "process_#{action}".intern do |tree|
           puts tree.inspect if $DEBUG

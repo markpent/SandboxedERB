@@ -57,6 +57,24 @@ class TestValidTemplates < Test::Unit::TestCase
     assert_equal "2", result
   end
   
+  should "allow extended conditions" do
+    str_template = "<% 
+    i=5
+    if i > 10 && i < 300 %>1<%elsif i > 100 || i == 5%>2<%end%>"
+
+    template = SandboxedErb::Template.new
+    result = template.compile(str_template)
+
+    assert_equal nil, template.get_error
+    
+    assert_equal true, result
+    
+    result = template.run(nil,{})
+    
+    assert_equal nil, template.get_error
+    assert_equal "2", result
+  end
+  
   should "allow unless statement" do
     str_template = "<% 
     i=0
