@@ -93,6 +93,7 @@ class Module
       end
     end
     
+    __the_methods_to_check << "nil?".intern
     
     __the_methods_to_check.uniq!
     

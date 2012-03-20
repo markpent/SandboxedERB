@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{sandboxed_erb}
-  s.version = "0.4.2"
+  s.version = "0.4.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["MarkPent"]
-  s.date = %q{2012-03-19}
+  s.date = %q{2012-03-20}
   s.description = %q{Run erb templates safely within a sandbox.}
   s.email = %q{mark.pent@gmail.com}
   s.extra_rdoc_files = [
@@ -46,10 +46,11 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://github.com/markpent/SandboxedERB}
   s.licenses = ["MIT"]
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.5.2}
+  s.rubygems_version = %q{1.3.7}
   s.summary = %q{Run an erb template in a sandbox.}
 
   if s.respond_to? :specification_version then
+    current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
