@@ -119,7 +119,12 @@ module SandboxedErb
       cmd.push('_erbout')
   
       ecompiler.post_cmd = cmd
-      ecompiler.compile(str_template)
+      e_template = ecompiler.compile(str_template)
+      if e_template.class == Array #ruby 1.9 returns an array with the encoding prefixed as a comment on the first line...
+        e_template = e_template[0].lines.to_a[1..-1].join
+      end
+      
+      e_template
     end
     
     def sandbox_code(erb_template) #:nodoc:

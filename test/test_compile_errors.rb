@@ -1,4 +1,4 @@
-require 'helper'
+require File.expand_path('../helper', __FILE__)
 
 class TestCompileErrors < Test::Unit::TestCase
   should "report insecure call during compile: global" do
@@ -137,6 +137,6 @@ class TestCompileErrors < Test::Unit::TestCase
     template = SandboxedErb::Template.new
     assert_equal false, template.compile(str_template)
     
-    assert_match /compile error\nline:4: syntax error/, template.get_error
+    assert_match /line:4: syntax error/, template.get_error
   end
 end

@@ -72,11 +72,12 @@ class Module
   def not_sandboxed_methods(include_superclasses = false, allowed_mixins=[], *disallowed_methods)
 
     __the_methods_to_check = public_instance_methods(false)
+    puts "#{self.name}: direct: #{__the_methods_to_check.inspect}" if $DEBUG
     if include_superclasses
       clz = self.superclass
       while !clz.nil?
-        unless clz == Object
-          #puts "#{self.name}: #{clz.name}: #{clz.public_instance_methods(false).inspect}"
+        unless clz == Object || (defined? BasicObject && clz == BasicObject)
+          puts "#{self.name}: #{clz.name}: #{clz.public_instance_methods(false).inspect}" if $DEBUG
           __the_methods_to_check += clz.public_instance_methods(false)
         end
         clz = clz.superclass
@@ -86,7 +87,7 @@ class Module
         #we include any mixins
         for m in self.included_modules
           if allowed_mixins.include?(m)
-            #puts "#{self.name}: #{m.name}: #{m.public_instance_methods(false).inspect}"
+            puts "#{self.name}: #{m.name}: #{m.public_instance_methods(false).inspect}" if $DEBUG
             __the_methods_to_check += m.public_instance_methods(false)
           end
         end
@@ -108,7 +109,7 @@ class Module
       end
     end
     
-    #puts "#{self.name}: #{__the_methods_to_check.inspect}"
+    puts "#{self.name}: #{__the_methods_to_check.inspect}" if $DEBUG
      
     sandboxed_methods(*__the_methods_to_check)
     
