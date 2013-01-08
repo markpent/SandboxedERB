@@ -31,7 +31,7 @@ require "sandboxed_erb/system_mixins"
 module SandboxedErb
   class Error < ::StandardError #:nodoc: all
   end
-  
+
   class CompileError < Error #:nodoc: all
   end
   class CompileSecurityError < Error #:nodoc: all
