@@ -3,7 +3,7 @@ source "http://rubygems.org"
 # Example:
 #   gem "activesupport", ">= 2.3.5"
 gem "partialruby", ">= 0.2.2"
-gem "ruby_parser", "~> 2.0"
+#gem "ruby_parser", "~> 2.0"
 
 # Add dependencies to develop your gem here.
 # Include everything needed to run rake, tests, features, etc.
