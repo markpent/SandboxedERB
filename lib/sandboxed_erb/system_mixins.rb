@@ -27,9 +27,9 @@ if defined? ActiveSupport
   Float.not_sandboxed_methods true, [ActiveSupport::CoreExtensions::Numeric::Bytes, ActiveSupport::CoreExtensions::Numeric::Time, Comparable], :bang_methods
   Range.not_sandboxed_methods true, [ActiveSupport::CoreExtensions::Range::Conversions, Enumerable], :bang_methods
   Symbol.not_sandboxed_methods true
-  Time.not_sandboxed_methods true, [ActiveSupport::CoreExtensions::Time::Conversions, ActiveSupport::CoreExtensions::Time::Calculations, Comparable], :bang_methods
-  Date.not_sandboxed_methods true, [ActiveSupport::CoreExtensions::Date::Conversions, Comparable], :bang_methods
-  DateTime.not_sandboxed_methods true, [ActiveSupport::CoreExtensions::Date::Conversions, Comparable], :bang_methods
+  Time.not_sandboxed_methods true, [ActiveSupport::CoreExtensions::Time::Conversions, ActiveSupport::CoreExtensions::Time::Calculations, Comparable], :bang_methods if defined? Time
+  Date.not_sandboxed_methods true, [ActiveSupport::CoreExtensions::Date::Conversions, Comparable], :bang_methods if defined? Date
+  DateTime.not_sandboxed_methods true, [ActiveSupport::CoreExtensions::Date::Conversions, Comparable], :bang_methods if defined? DateTime
   NilClass.not_sandboxed_methods true
   Array.not_sandboxed_methods true, [ActiveSupport::CoreExtensions::Array::Grouping, ActiveSupport::CoreExtensions::Array::Conversions, Enumerable], :bang_methods
   Hash.not_sandboxed_methods true, [ActiveSupport::CoreExtensions::Hash::Diff, ActiveSupport::CoreExtensions::Hash::Conversions, ActiveSupport::CoreExtensions::Hash::ReverseMerge, ActiveSupport::CoreExtensions::Hash::IndifferentAccess, ActiveSupport::CoreExtensions::Hash::Keys, Enumerable], :bang_methods
@@ -41,9 +41,9 @@ else
   Float.not_sandboxed_methods true, [Comparable], :bang_methods
   Range.not_sandboxed_methods true, [Enumerable], :bang_methods
   Symbol.not_sandboxed_methods true
-  Time.not_sandboxed_methods true, [Comparable], :bang_methods
-  Date.not_sandboxed_methods true, [Comparable], :bang_methods
-  DateTime.not_sandboxed_methods true, [Comparable], :bang_methods
+  Time.not_sandboxed_methods true, [Comparable], :bang_methods if defined? Time
+  Date.not_sandboxed_methods true, [Comparable], :bang_methods if defined? Date
+  DateTime.not_sandboxed_methods true, [Comparable], :bang_methods if defined? DateTime
   NilClass.not_sandboxed_methods true
   Array.not_sandboxed_methods true, [Enumerable], :bang_methods
   Hash.not_sandboxed_methods true, [Enumerable], :bang_methods
